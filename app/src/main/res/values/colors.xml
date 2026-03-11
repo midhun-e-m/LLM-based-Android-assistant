@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base dark colors -->
+    <color name="black_900">#121212</color>
+    <color name="black_800">#1E1E1E</color>
+    <color name="black_700">#242424</color>
+
+    <!-- Text -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
+
+    <!-- Accent -->
+    <color name="accent">#3DDC84</color> <!-- subtle green -->
+    <!-- You can change to blue: #4FC3F7 -->
+
+    <!-- Chat bubbles -->
+    <color name="user_bubble">#3A3A3A</color>
+    <color name="assistant_bubble">#1F1F1F</color>
+</resources>
+

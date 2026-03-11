@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#0B0F0C">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp">
+
+        <!-- Logo -->
+        <ImageView
+            android:src="@mipmap/ic_launcher"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Title -->
+        <TextView
+            android:text="LLMOS Assistant"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#E6F2ED"
+            android:layout_marginBottom="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Subtitle -->
+        <TextView
+            android:text="Your AI-powered Android OS assistant"
+            android:textSize="14sp"
+            android:textColor="#9FBEB3"
+            android:layout_marginBottom="32dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Email -->
+        <EditText
+            android:id="@+id/emailInput"
+            android:hint="Email"
+            android:textColor="#E6F2ED"
+            android:textColorHint="#9FBEB3"
+            android:background="@drawable/rounded_input"
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"/>
+
+        <EditText
+            android:id="@+id/passwordInput"
+            android:hint="Password"
+            android:textColor="#E6F2ED"
+            android:textColorHint="#9FBEB3"
+            android:background="@drawable/rounded_input"
+            android:inputType="textPassword"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"/>
+
+
+        <!-- Continue Button -->
+        <Button
+            android:id="@+id/loginBtn"
+            android:text="Continue"
+            android:textAllCaps="false"
+            android:textColor="#E6F2ED"
+            android:textSize="16sp"
+            android:background="@drawable/rounded_button_green"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"/>
+
+        <!-- Divider -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginVertical="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:layout_weight="1"
+                android:layout_height="1dp"
+                android:background="#1F3D32"
+                android:layout_width="0dp"/>
+
+            <TextView
+                android:text="or"
+                android:textColor="#9FBEB3"
+                android:paddingHorizontal="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <View
+                android:layout_weight="1"
+                android:layout_height="1dp"
+                android:background="#1F3D32"
+                android:layout_width="0dp"/>
+        </LinearLayout>
+
+        <!-- Google Sign-In Wrapper -->
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/googleSignInBtn"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"/>
+        <!-- Loading Overlay -->
+        <FrameLayout
+            android:id="@+id/loadingOverlay"
+            android:visibility="gone"
+            android:background="#CC0B0F0C"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/loadingSpinner"
+                style="?android:attr/progressBarStyleLarge"
+                android:indeterminate="true"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </FrameLayout>
+
+
+    </LinearLayout>
+</ScrollView>

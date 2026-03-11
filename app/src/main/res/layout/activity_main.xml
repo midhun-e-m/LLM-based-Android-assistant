@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <!-- ChatFragment loads here -->
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+
+        android:background="#0B0F0C"
+        android:elevation="10dp"
+
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/drawer_menu"
+
+        app:itemTextColor="#E8EAED"
+        app:itemIconTint="#9AA0A6"
+        app:itemHorizontalPadding="16dp"
+        app:itemVerticalPadding="8dp"
+
+        app:itemRippleColor="#1F1F1F"
+
+        />
+
+</androidx.drawerlayout.widget.DrawerLayout>
