@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -95,6 +96,12 @@ class ChatAdapter(
         holder: RecyclerView.ViewHolder,
         position: Int
     ) {
+        val animation = AnimationUtils.loadAnimation(
+            holder.itemView.context,
+            R.anim.message_in
+        )
+
+        holder.itemView.startAnimation(animation)
 
         val message = messages[position]
 

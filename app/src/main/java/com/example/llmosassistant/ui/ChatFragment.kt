@@ -125,6 +125,13 @@ class ChatFragment : Fragment() {
         val sendButton = view.findViewById<ImageButton>(R.id.sendButton)
         val micButton = view.findViewById<ImageButton>(R.id.micButton)
 
+        val suggestionContainer = view.findViewById<View>(R.id.suggestionContainer)
+
+        fun startChat() {
+            suggestionContainer.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
+
         adapter = ChatAdapter(messages)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
@@ -136,8 +143,24 @@ class ChatFragment : Fragment() {
         }
 
         sendButton.setOnClickListener {
+            it.animate()
+                .scaleX(0.85f)
+                .scaleY(0.85f)
+                .setDuration(80)
+                .withEndAction {
+
+                    it.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .duration = 80
+
+                }
             val text = inputField.text.toString()
             if (text.isNotBlank()) {
+
+                suggestionContainer.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+
                 inputField.text.clear()
                 handleUserInput(text)
             }
