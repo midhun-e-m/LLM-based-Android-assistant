@@ -3,12 +3,12 @@ package com.example.llmosassistant.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.llmosassistant.R
 import com.example.llmosassistant.auth.AuthGate
+import com.example.llmosassistant.utils.SessionManager
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,30 +40,31 @@ class MainActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, ChatFragment())
-            .commit()
+        if (savedInstanceState == null) {
+
+            val existingSession = SessionManager.getSession(this)
+
+            val fragment =
+                if (existingSession != null) {
+                    ChatFragment.newSession(existingSession)
+                } else {
+                    ChatFragment()
+                }
+
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .commit()
+        }
 
         loadChatHistory()
-
-        if (intent?.action == Intent.ACTION_ASSIST) {
-            window.decorView.postDelayed({
-
-                val fragment =
-                    supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-
-                fragment?.view
-                    ?.findViewById<ImageButton>(R.id.micButton)
-                    ?.performClick()
-
-            }, 400)
-        }
 
         navigationView.setNavigationItemSelectedListener { item ->
 
             when (item.itemId) {
 
                 R.id.nav_new_chat -> {
+
+                    SessionManager.clearSession(this)
 
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainer, ChatFragment())
@@ -86,17 +87,6 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this, LoginActivity::class.java))
                     finish()
 
-                }
-
-                else -> {
-
-                    val sessionId = item.title.toString()
-
-                    val fragment = ChatFragment.newSession(sessionId)
-
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, fragment)
-                        .commit()
                 }
             }
 
@@ -125,23 +115,28 @@ class MainActivity : AppCompatActivity() {
 
                 snapshot.documents.forEach { doc ->
 
-                    val title = doc.getString("title") ?: "Chat"
+                    val title = doc.getString("title") ?: "New Chat"
                     val sessionId = doc.id
 
-                    menu.add(groupId, sessionId.hashCode(), 0, title)
-                        .setOnMenuItemClickListener {
+                    val item = menu.add(groupId, Menu.NONE, Menu.NONE, title)
 
-                            val fragment = ChatFragment.newSession(sessionId)
+                    item.setOnMenuItemClickListener {
 
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragmentContainer, fragment)
-                                .commit()
+                        SessionManager.saveSession(this, sessionId)
 
-                            drawerLayout.closeDrawers()
+                        val fragment = ChatFragment.newSession(sessionId)
 
-                            true
-                        }
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainer, fragment)
+                            .commit()
+
+                        drawerLayout.closeDrawer(GravityCompat.START)
+
+                        true
+                    }
                 }
             }
     }
+
+
 }

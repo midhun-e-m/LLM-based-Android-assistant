@@ -5,15 +5,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
 
     <!-- ================= MAIN CONTENT ================= -->
-    <!-- ChatFragment loads here -->
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+
 
     <!-- ================= SIDEBAR ================= -->
 
@@ -23,19 +26,21 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
 
-        android:background="#0B0F0C"
-        android:elevation="10dp"
+        android:background="@drawable/bg_gradient"
+        android:elevation="16dp"
 
         app:headerLayout="@layout/drawer_header"
         app:menu="@menu/drawer_menu"
 
-        app:itemTextColor="#E8EAED"
-        app:itemIconTint="#9AA0A6"
-        app:itemHorizontalPadding="16dp"
-        app:itemVerticalPadding="8dp"
+        app:itemTextColor="#E2E8F0"
+        app:itemIconTint="#9CA3AF"
 
-        app:itemRippleColor="#1F1F1F"
+        app:itemHorizontalPadding="20dp"
+        app:itemVerticalPadding="12dp"
+
+        app:itemRippleColor="#25324A"
 
         />
+
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -27,6 +27,7 @@ import com.example.llmosassistant.utils.buildMemorySummary
 import com.example.llmosassistant.voice.VoiceInputManager
 import com.example.llmosassistant.youtube.YouTubeApiClient
 import com.example.llmosassistant.ai.ImageGenerationClient
+import com.example.llmosassistant.utils.SessionManager
 
 class ChatFragment : Fragment() {
 
@@ -80,10 +81,37 @@ class ChatFragment : Fragment() {
 
         currentSessionId = arguments?.getString("sessionId")
 
+        currentSessionId?.let {
+            SessionManager.saveSession(requireContext(), it)
+        }
+
         if (currentSessionId == null) {
 
             chatRepository.createNewSession { sessionId ->
+
                 currentSessionId = sessionId
+
+                SessionManager.saveSession(
+                    requireContext(),
+                    sessionId
+                )
+
+                chatRepository.listenForMessages(sessionId) { history ->
+
+                    messages.clear()
+
+                    history.forEach { msg ->
+                        messages.add(
+                            ChatMessage(
+                                text = msg.text,
+                                user = msg.user
+                            )
+                        )
+                    }
+
+                    adapter.notifyDataSetChanged()
+                    recyclerView.scrollToPosition(messages.size - 1)
+                }
             }
 
         } else {
