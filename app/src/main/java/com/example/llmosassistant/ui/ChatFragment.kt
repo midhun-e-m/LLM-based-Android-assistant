@@ -28,6 +28,7 @@ import com.example.llmosassistant.voice.VoiceInputManager
 import com.example.llmosassistant.youtube.YouTubeApiClient
 import com.example.llmosassistant.ai.ImageGenerationClient
 import com.example.llmosassistant.utils.SessionManager
+import com.example.llmosassistant.youtube.YouTubeTranscriptClient;
 
 class ChatFragment : Fragment() {
 
@@ -63,6 +64,8 @@ class ChatFragment : Fragment() {
     private var lastDetailedLogs: List<ActivityLog>? = null
     private var lastIntentWasMemoryQuery = false
 
+    private var lastYoutubeVideoId: String? = null
+
     private val contactPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -78,6 +81,22 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        recyclerView = view.findViewById(R.id.chatRecyclerView)
+        val inputField = view.findViewById<EditText>(R.id.messageInput)
+        val sendButton = view.findViewById<ImageButton>(R.id.sendButton)
+        val micButton = view.findViewById<ImageButton>(R.id.micButton)
+
+        val suggestionContainer = view.findViewById<View>(R.id.suggestionContainer)
+
+        fun startChat() {
+            suggestionContainer.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
+
+        adapter = ChatAdapter(messages)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
 
         currentSessionId = arguments?.getString("sessionId")
 
@@ -98,19 +117,24 @@ class ChatFragment : Fragment() {
 
                 chatRepository.listenForMessages(sessionId) { history ->
 
-                    messages.clear()
+                    requireActivity().runOnUiThread {
 
-                    history.forEach { msg ->
-                        messages.add(
-                            ChatMessage(
-                                text = msg.text,
-                                user = msg.user
+                        startChat()
+
+                        messages.clear()
+
+                        history.forEach { msg ->
+                            messages.add(
+                                ChatMessage(
+                                    text = msg.text,
+                                    user = msg.user
+                                )
                             )
-                        )
-                    }
+                        }
 
-                    adapter.notifyDataSetChanged()
-                    recyclerView.scrollToPosition(messages.size - 1)
+                        adapter.notifyDataSetChanged()
+                        recyclerView.scrollToPosition(messages.size - 1)
+                    }
                 }
             }
 
@@ -118,51 +142,42 @@ class ChatFragment : Fragment() {
 
             chatRepository.listenForMessages(currentSessionId!!) { history ->
 
-                messages.clear()
+                requireActivity().runOnUiThread {
 
-                history.forEach { msg ->
+                    startChat()
 
-                    if (msg.user) {
+                    messages.clear()
 
-                        messages.add(
-                            ChatMessage(
-                                text = msg.text,
-                                user = true
+                    history.forEach { msg ->
+
+                        if (msg.user) {
+
+                            messages.add(
+                                ChatMessage(
+                                    text = msg.text,
+                                    user = true
+                                )
                             )
-                        )
 
-                    } else {
+                        } else {
 
-                        messages.add(
-                            ChatMessage(
-                                text = msg.text,
-                                user = false
+                            messages.add(
+                                ChatMessage(
+                                    text = msg.text,
+                                    user = false
+                                )
                             )
-                        )
+                        }
                     }
+
+                    adapter.notifyDataSetChanged()
+
+                    recyclerView.scrollToPosition(messages.size - 1)
                 }
-
-                adapter.notifyDataSetChanged()
-
-                recyclerView.scrollToPosition(messages.size - 1)
             }
         }
 
-        recyclerView = view.findViewById(R.id.chatRecyclerView)
-        val inputField = view.findViewById<EditText>(R.id.messageInput)
-        val sendButton = view.findViewById<ImageButton>(R.id.sendButton)
-        val micButton = view.findViewById<ImageButton>(R.id.micButton)
 
-        val suggestionContainer = view.findViewById<View>(R.id.suggestionContainer)
-
-        fun startChat() {
-            suggestionContainer.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
-        }
-
-        adapter = ChatAdapter(messages)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = adapter
 
         actionExecutor = ActionExecutor(requireContext())
 
@@ -234,6 +249,49 @@ class ChatFragment : Fragment() {
                     return
                 }
             }
+        }
+        if (cleaned.contains("summarize") && cleaned.contains("video")) {
+
+            val videoId = lastYoutubeVideoId
+
+            if (videoId == null) {
+
+                streamAssistantMessage("No video found to summarize.")
+                return
+            }
+
+            streamAssistantMessage("Analyzing the video...")
+
+            val transcriptClient = YouTubeTranscriptClient()
+
+            transcriptClient.getTranscript(videoId) { transcript ->
+
+                if (transcript == null) {
+
+                    requireActivity().runOnUiThread {
+                        streamAssistantMessage("Could not fetch video transcript.")
+                    }
+
+                    return@getTranscript
+                }
+
+                val prompt =
+                    PromptBuilder.buildYouTubeSummaryPrompt(transcript)
+
+                llmClient.process(prompt) { result ->
+
+                    requireActivity().runOnUiThread {
+
+                        result.response?.let {
+
+                            streamAssistantMessage(it)
+
+                        } ?: streamAssistantMessage("Failed to generate summary.")
+                    }
+                }
+            }
+
+            return
         }
 
         // ================= LOCAL MEMORY QUERY =================
@@ -378,6 +436,7 @@ class ChatFragment : Fragment() {
 
                                 youtubeApiClient.getFirstVideo(query) { video ->
                                     video?.let {
+                                        lastYoutubeVideoId = it.id
                                         actionExecutor.playYouTubeVideo(it.id)
                                         memoryRepository.logActivity(
                                             "YOUTUBE_PLAY",
@@ -586,6 +645,8 @@ class ChatFragment : Fragment() {
     // =========================================================
 
     private fun streamAssistantMessage(fullText: String) {
+
+        recyclerView.visibility = View.VISIBLE
 
         val message = ChatMessage("", false)
         messages.add(message)

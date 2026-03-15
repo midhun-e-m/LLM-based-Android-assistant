@@ -315,4 +315,19 @@ Do NOT rename the topic.
 
 """.trimIndent()
     }
+
+    fun buildYouTubeSummaryPrompt(transcript: String): String {
+
+        return """
+    Summarize the following YouTube video transcript.
+
+    Provide:
+    - Key points
+    - Main ideas
+    - Important conclusions
+
+    Transcript:
+    $transcript
+    """.trimIndent()
+    }
 }
