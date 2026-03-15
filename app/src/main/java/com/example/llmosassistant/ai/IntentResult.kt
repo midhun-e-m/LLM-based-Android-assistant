@@ -29,5 +29,10 @@ data class IntentResult(
 
     val topic: String? =  null,
 
+    //PC control
+
+    val action:String?=null,
+    val value:String?=null,
+
     val response: String
 )

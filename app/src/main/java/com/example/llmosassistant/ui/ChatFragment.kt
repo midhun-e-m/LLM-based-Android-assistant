@@ -27,8 +27,11 @@ import com.example.llmosassistant.utils.buildMemorySummary
 import com.example.llmosassistant.voice.VoiceInputManager
 import com.example.llmosassistant.youtube.YouTubeApiClient
 import com.example.llmosassistant.ai.ImageGenerationClient
+import com.example.llmosassistant.pccontrol.PcCommand
+import com.example.llmosassistant.pccontrol.PcCommandSender
 import com.example.llmosassistant.utils.SessionManager
 import com.example.llmosassistant.youtube.YouTubeTranscriptClient;
+import com.example.llmosassistant.pccontrol.PcDeviceManager
 
 class ChatFragment : Fragment() {
 
@@ -517,6 +520,29 @@ class ChatFragment : Fragment() {
                                         ?: "Generated Document"
 
                                 generateStructuredPdfFromContext(topic)
+                            }
+                            "PC_CONTROL" -> {
+
+                                val deviceId = PcDeviceManager(requireContext()).getDeviceId()
+
+                                if (deviceId == null) {
+
+                                    streamAssistantMessage("No PC linked. Please link your PC first.")
+
+                                    return@runOnUiThread
+                                }
+
+                                val action = result.action ?: ""
+                                val value = result.value ?: ""
+
+                                val command = PcCommand(
+                                    action = action,
+                                    value = value
+                                )
+
+                                PcCommandSender().sendCommand(deviceId, command)
+
+                                streamAssistantMessage("Command sent to your PC.")
                             }
                         }
                     }

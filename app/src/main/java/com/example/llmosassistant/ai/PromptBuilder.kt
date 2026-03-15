@@ -64,6 +64,7 @@ SEND_EMAIL
 SEND_LAST_EMAIL
 GENERATE_PDF
 GENERATE_STRUCTURED_PDF
+PC_CONTROL
 
 
 Rules:
@@ -172,6 +173,31 @@ Return:
 {
  "intent":"GENERATE_STRUCTURED_PDF",
  "topic":"<topic derived from context>"
+}
+
+If the user wants to control their PC return JSON:
+
+{
+ "intent":"PC_CONTROL",
+ "action":"open_app | shutdown | lock | volume",
+ "value":"app name if needed"
+}
+
+Examples:
+
+User: open chrome on my pc
+Return:
+{
+ "intent":"PC_CONTROL",
+ "action":"open_app",
+ "value":"chrome"
+}
+
+User: shutdown my computer
+Return:
+{
+ "intent":"PC_CONTROL",
+ "action":"shutdown"
 }
 
 JSON format:

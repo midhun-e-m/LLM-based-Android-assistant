@@ -13,6 +13,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.example.llmosassistant.pccontrol.PcLinkFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -70,6 +71,13 @@ class MainActivity : AppCompatActivity() {
                         .replace(R.id.fragmentContainer, ChatFragment())
                         .commit()
 
+                }
+
+                R.id.nav_link_pc -> {
+
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, PcLinkFragment())
+                        .commit()
                 }
 
                 R.id.nav_settings -> {

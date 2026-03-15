@@ -7,6 +7,11 @@
         android:id="@+id/nav_new_chat"
         android:title="New Chat"
         android:icon="@drawable/ic_add"/>
+    <!--LINK TO PC-->
+    <item
+        android:id="@+id/nav_link_pc"
+        android:title="Link PC"
+        android:icon="@drawable/ic_pc"/>
 
     <!-- CHAT HISTORY GROUP -->
     <group
