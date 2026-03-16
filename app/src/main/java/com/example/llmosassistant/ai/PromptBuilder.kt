@@ -178,9 +178,9 @@ Return:
 If the user wants to control their PC return JSON:
 
 {
- "intent":"PC_CONTROL",
- "action":"open_app | shutdown | lock | volume",
- "value":"app name if needed"
+ "intent":"pc_control",
+ "action":"open_app | chrome_search | write_note | shutdown | lock",
+ "value":"text or app name"
 }
 
 Examples:
@@ -198,6 +198,51 @@ Return:
 {
  "intent":"PC_CONTROL",
  "action":"shutdown"
+}
+User: search neural networks on my pc
+Return:
+{
+ "intent":"pc_control",
+ "action":"chrome_search",
+ "value":"neural networks"
+}
+
+If the user wants to write something on the PC using Notepad return JSON:
+
+{
+ "intent": "pc_control",
+ "action": "write_note",
+ "value": "<text that should be written>"
+}
+
+Rules:
+- If the user provides text, use it directly.
+- If the user asks to generate something (like a program, answer, note), generate the content and place it in value.
+
+Examples:
+
+User: write note hello world
+Return:
+{
+ "intent":"pc_control",
+ "action":"write_note",
+ "value":"hello world"
+}
+
+User: write a python hello world program on my pc
+Return:
+{
+ "intent":"pc_control",
+ "action":"write_note",
+ "value":"print('Hello World')"
+}
+
+User: open notepad and write a short note about artificial intelligence
+Return:
+{
+ "intent":"pc_control",
+ "action":"write_note",
+ "value":"Artificial Intelligence is the field of computer science that focuses on creating systems capable of performing tasks that normally require human intelligence."
 }
 
 JSON format:
