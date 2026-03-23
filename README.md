@@ -17,6 +17,7 @@ The project explores the idea of **LLM as an Operating System Interface**, where
 - 🧠 Context aware responses
 - ☁️ Firebase authentication
 - 📜 Chat history storage
+- PC control 
 
 ---
 
